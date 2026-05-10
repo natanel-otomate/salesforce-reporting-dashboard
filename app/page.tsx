@@ -1,595 +1,564 @@
 import Link from "next/link";
 
-const features = [
-  {
-    title: "Cross-Workspace Aggregation",
-    description:
-      "Connect multiple Monday.com workspaces and pull live board data into a single unified view — no manual exports required.",
-    icon: (
-      <svg
-        className="w-7 h-7 text-indigo-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.8}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Automated Report Scheduling",
-    description:
-      "Set daily, weekly, or monthly delivery cadences. WorkPulse runs in the background and sends polished reports exactly when your stakeholders need them.",
-    icon: (
-      <svg
-        className="w-7 h-7 text-indigo-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.8}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Executive-Ready Formatting",
-    description:
-      "Reports are structured, clean, and readable by anyone — including stakeholders who don't have a Monday.com license or ever log in.",
-    icon: (
-      <svg
-        className="w-7 h-7 text-indigo-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.8}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Email Delivery to Anyone",
-    description:
-      "Deliver reports to any email address on a configurable recipient list. No Monday.com seat required for your clients, executives, or board members.",
-    icon: (
-      <svg
-        className="w-7 h-7 text-indigo-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.8}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Live Board Snapshots",
-    description:
-      "Every report captures a point-in-time snapshot of board status, item counts, deadlines, and assignees — so there's always a historical record.",
-    icon: (
-      <svg
-        className="w-7 h-7 text-indigo-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.8}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-        />
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-        />
-      </svg>
-    ),
-  },
-  {
-    title: "Multi-Workspace Management",
-    description:
-      "Manage API connections to multiple Monday.com workspaces from one dashboard. Add, remove, or reconfigure connections without touching any code.",
-    icon: (
-      <svg
-        className="w-7 h-7 text-indigo-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.8}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-        />
-      </svg>
-    ),
-  },
-];
-
-const steps = [
-  {
-    number: "01",
-    title: "Connect Your Workspaces",
-    description:
-      "Paste your Monday.com API token and WorkPulse will discover all boards across your workspaces automatically.",
-  },
-  {
-    number: "02",
-    title: "Configure Your Report",
-    description:
-      "Select the boards you want included, choose a schedule cadence, and add any recipient email addresses.",
-  },
-  {
-    number: "03",
-    title: "Reports Delivered Automatically",
-    description:
-      "WorkPulse handles everything from there — pulling live data, formatting the report, and sending it on schedule.",
-  },
-];
-
-const testimonials: {
-  quote: string;
-  name: string;
-  role: string;
-  initials: string;
-  color: string;
-}[] = [
-  {
-    quote:
-      "Our board has no idea what Monday.com even is. WorkPulse sends them a clean status report every Monday morning and they love it.",
-    name: "Sarah Chen",
-    role: "Director of Operations, Aldgate Partners",
-    initials: "SC",
-    color: "bg-indigo-500",
-  },
-  {
-    quote:
-      "We run 4 client workspaces from one account. Before WorkPulse, reporting took 3 hours every Friday. Now it's zero.",
-    name: "Marcus Webb",
-    role: "PMO Lead, Clearfield Consulting",
-    initials: "MW",
-    color: "bg-violet-500",
-  },
-  {
-    quote:
-      "The snapshot history alone is worth it. Clients used to dispute project timelines — now we just share the archived report.",
-    name: "Priya Nair",
-    role: "Head of Delivery, Nexus Studio",
-    initials: "PN",
-    color: "bg-sky-500",
-  },
-];
-
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 antialiased">
-      {/* ── Navigation ── */}
-      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-sm">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Navigation */}
+      <nav className="w-full border-b border-gray-100 bg-white sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
+            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
               <svg
-                className="h-4 w-4 text-white"
+                className="w-5 h-5 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={2.5}
+                strokeWidth={2}
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
+                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 012-2h2a2 2 0 012 2"
                 />
               </svg>
-            </span>
-            <span className="text-lg font-bold tracking-tight text-gray-900">
-              WorkPulse
-            </span>
+            </div>
+            <span className="text-xl font-bold text-gray-900">SyncBridge</span>
           </div>
-
-          <div className="hidden items-center gap-8 md:flex">
-            <a
+          <div className="flex items-center gap-6">
+            <Link
               href="#features"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors hidden md:block"
             >
               Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-            >
-              How it works
-            </a>
-            <a
-              href="#testimonials"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-            >
-              Testimonials
-            </a>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/sign-in"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-            >
-              Sign in
             </Link>
             <Link
-              href="/sign-up"
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              href="#pricing"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors hidden md:block"
+            >
+              Pricing
+            </Link>
+            <Link
+              href="/auth"
+              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/auth?mode=signup"
+              className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
             >
               Get started free
             </Link>
           </div>
-        </nav>
-      </header>
+        </div>
+      </nav>
 
-      <main>
-        {/* ── Hero ── */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50 via-white to-white px-6 pb-24 pt-20">
-          {/* Background decoration */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+      {/* Hero Section */}
+      <section className="flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-24 text-center bg-gradient-to-b from-indigo-50 to-white">
+        <div className="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wide">
+          <span className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+          Built for Monday.com power users
+        </div>
+
+        <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight max-w-4xl mb-6">
+          One report.{" "}
+          <span className="text-indigo-600">Every board.</span>{" "}
+          Delivered automatically.
+        </h1>
+
+        <p className="text-xl text-gray-500 max-w-2xl mb-10 leading-relaxed">
+          SyncBridge aggregates data across all your Monday.com boards into
+          polished executive reports — scheduled, automated, and sent to your
+          inbox without a single manual export.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+          <Link
+            href="/auth?mode=signup"
+            className="bg-indigo-600 text-white text-base font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 w-full sm:w-auto"
           >
-            <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-indigo-300 to-violet-300 opacity-25 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
-          </div>
+            Start for free — no credit card
+          </Link>
+          <Link
+            href="#features"
+            className="text-gray-600 text-base font-medium px-8 py-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors w-full sm:w-auto"
+          >
+            See how it works
+          </Link>
+        </div>
 
-          <div className="mx-auto max-w-4xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5">
-              <span className="h-2 w-2 rounded-full bg-indigo-500" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-indigo-700">
-                Monday.com Reporting — Automated
-              </span>
+        <p className="text-sm text-gray-400 mt-5">
+          Setup in under 5 minutes · No developer required
+        </p>
+      </section>
+
+      {/* Social Proof Strip */}
+      <section className="bg-gray-50 border-y border-gray-100 py-10 px-6">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-center text-sm text-gray-400 uppercase tracking-widest font-semibold mb-8">
+            Solving the pain that Monday.com can't
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+              <p className="text-gray-700 text-sm leading-relaxed italic">
+                "We pay $2,000/month for Monday.com and still can't automate a
+                single cross-board report. Our ops team spends 4 hours every
+                Friday doing it manually."
+              </p>
+              <div className="mt-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-sm">
+                  S
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800">Sarah M.</p>
+                  <p className="text-xs text-gray-400">VP Operations, Series B SaaS</p>
+                </div>
+              </div>
             </div>
+            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+              <p className="text-gray-700 text-sm leading-relaxed italic">
+                "My executives want a single view across 12 project boards. I've
+                been building that Google Sheet manually for 18 months. There
+                has to be a better way."
+              </p>
+              <div className="mt-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-sm">
+                  D
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800">David K.</p>
+                  <p className="text-xs text-gray-400">PMO Director, Enterprise</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+              <p className="text-gray-700 text-sm leading-relaxed italic">
+                "The native Monday.com dashboards only show one board at a time.
+                We needed a rollup of KPIs across 8 boards and had to hire a
+                contractor just for reporting."
+              </p>
+              <div className="mt-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold text-sm">
+                  A
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-800">Anika R.</p>
+                  <p className="text-xs text-gray-400">Head of Strategy, Agency</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-6xl lg:text-7xl">
-              Cross-Workspace Reports,{" "}
-              <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                Delivered Automatically
-              </span>
-            </h1>
-
-            <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-gray-600 sm:text-xl">
-              WorkPulse aggregates live data from multiple Monday.com workspaces,
-              generates formatted executive reports on a configurable schedule,
-              and delivers them by email to anyone — no Monday.com license
-              required.
+      {/* Features Section */}
+      <section id="features" className="py-24 px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+              Everything executives need. Nothing they don't.
+            </h2>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+              SyncBridge connects directly to Monday.com and handles the entire
+              reporting workflow — from data aggregation to scheduled delivery.
             </p>
-
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href="/sign-up"
-                className="w-full rounded-xl bg-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 hover:shadow-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-              >
-                Start for free — no credit card
-              </Link>
-              <Link
-                href="/sign-in"
-                className="w-full rounded-xl border border-gray-200 bg-white px-8 py-4 text-base font-semibold text-gray-700 shadow-sm transition-all hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 sm:w-auto"
-              >
-                Sign in to your account
-              </Link>
-            </div>
-
-            <p className="mt-5 text-sm text-gray-400">
-              14-day free trial · No credit card required · Cancel anytime
-            </p>
           </div>
 
-          {/* Hero illustration / mock UI */}
-          <div className="mx-auto mt-20 max-w-5xl">
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl shadow-gray-200">
-              {/* Browser chrome */}
-              <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50 px-4 py-3">
-                <span className="h-3 w-3 rounded-full bg-red-400" />
-                <span className="h-3 w-3 rounded-full bg-yellow-400" />
-                <span className="h-3 w-3 rounded-full bg-green-400" />
-                <div className="mx-auto flex w-64 items-center justify-center rounded-md border border-gray-200 bg-white px-3 py-1">
-                  <span className="text-xs text-gray-400">
-                    app.workpulse.io/dashboard
-                  </span>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Feature 1 */}
+            <div className="flex gap-5 p-6 rounded-2xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-colors group">
+              <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-200 transition-colors">
+                <svg
+                  className="w-6 h-6 text-indigo-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                  />
+                </svg>
               </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Cross-Board Aggregation
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Select up to 10 Monday.com boards and map columns to unified
+                  metrics. SyncBridge rolls up totals, averages, and counts
+                  across all boards instantly.
+                </p>
+              </div>
+            </div>
 
-              {/* Mock dashboard */}
-              <div className="grid grid-cols-4 divide-x divide-gray-100">
-                {/* Sidebar */}
-                <div className="hidden bg-gray-50 p-4 sm:block">
-                  <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                    Workspaces
-                  </div>
-                  {["Engineering", "Marketing", "Client A", "Client B"].map(
-                    (ws) => (
-                      <div
-                        key={ws}
-                        className="mb-1 rounded-lg px-3 py-2 text-sm text-gray-600 first:bg-indigo-50 first:font-semibold first:text-indigo-700"
-                      >
-                        {ws}
-                      </div>
-                    )
-                  )}
-                  <div className="mt-6 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                    Reports
-                  </div>
-                  {["Weekly Status", "Sprint Review", "Exec Summary"].map(
-                    (r) => (
-                      <div
-                        key={r}
-                        className="mb-1 rounded-lg px-3 py-2 text-sm text-gray-600"
-                      >
-                        {r}
-                      </div>
-                    )
-                  )}
-                </div>
+            {/* Feature 2 */}
+            <div className="flex gap-5 p-6 rounded-2xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-colors group">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-purple-200 transition-colors">
+                <svg
+                  className="w-6 h-6 text-purple-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Scheduled Delivery
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Set reports to send daily, weekly, or monthly. SyncBridge
+                  pulls fresh data on your schedule and emails polished reports
+                  to any list of recipients — automatically.
+                </p>
+              </div>
+            </div>
 
-                {/* Main content */}
-                <div className="col-span-4 p-6 sm:col-span-3">
-                  <div className="mb-6 flex items-center justify-between">
-                    <div>
-                      <div className="text-lg font-bold text-gray-900">
-                        Weekly Status Report
-                      </div>
-                      <div className="text-sm text-gray-400">
-                        Next delivery: Monday 9:00 AM · 5 recipients
-                      </div>
-                    </div>
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-                      Active
-                    </span>
-                  </div>
+            {/* Feature 3 */}
+            <div className="flex gap-5 p-6 rounded-2xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-colors group">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-green-200 transition-colors">
+                <svg
+                  className="w-6 h-6 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Snapshot History
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Every report delivery is stored as a point-in-time snapshot.
+                  Browse the last 10 deliveries, view historical data, and track
+                  trends across reporting periods.
+                </p>
+              </div>
+            </div>
 
-                  {/* Stat cards */}
-                  <div className="mb-6 grid grid-cols-3 gap-4">
-                    {[
-                      {
-                        label: "Boards Monitored",
-                        value: "12",
-                        delta: "+2 this week",
-                      },
-                      {
-                        label: "Items Tracked",
-                        value: "384",
-                        delta: "across 3 workspaces",
-                      },
-                      {
-                        label: "Reports Sent",
-                        value: "47",
-                        delta: "last 30 days",
-                      },
-                    ].map((stat) => (
-                      <div
-                        key={stat.label}
-                        className="rounded-xl border border-gray-100 bg-gray-50 p-4"
-                      >
-                        <div className="text-2xl font-extrabold text-gray-900">
-                          {stat.value}
-                        </div>
-                        <div className="text-xs font-medium text-gray-500">
-                          {stat.label}
-                        </div>
-                        <div className="mt-1 text-xs text-indigo-500">
-                          {stat.delta}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+            {/* Feature 4 */}
+            <div className="flex gap-5 p-6 rounded-2xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-colors group">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-orange-200 transition-colors">
+                <svg
+                  className="w-6 h-6 text-orange-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  No-Code Setup
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Connect your Monday.com account, select boards, map columns,
+                  and configure your schedule in a guided multi-step form.
+                  No developer, no API keys, no spreadsheet hacks.
+                </p>
+              </div>
+            </div>
 
-                  {/* Board list mock */}
-                  <div className="rounded-xl border border-gray-100">
-                    <div className="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
-                      Included Boards
-                    </div>
-                    {[
-                      {
-                        name: "Q3 Roadmap",
-                        workspace: "Engineering",
-                        items: 48,
-                        status: "On track",
-                        color: "text-green-600",
-                      },
-                      {
-                        name: "Campaign Launch",
-                        workspace: "Marketing",
-                        items: 31,
-                        status: "At risk",
-                        color: "text-amber-600",
-                      },
-                      {
-                        name: "Client Deliverables",
-                        workspace: "Client A",
-                        items: 19,
-                        status: "On track",
-                        color: "text-green-600",
-                      },
-                    ].map((board) => (
-                      <div
-                        key={board.name}
-                        className="flex items-center justify-between border-b border-gray-50 px-4 py-3 last:border-0"
-                      >
-                        <div>
-                          <div className="text-sm font-semibold text-gray-800">
-                            {board.name}
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            {board.workspace} · {board.items} items
-                          </div>
-                        </div>
-                        <span
-                          className={`text-xs font-semibold ${board.color}`}
-                        >
-                          {board.status}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            {/* Feature 5 */}
+            <div className="flex gap-5 p-6 rounded-2xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-colors group">
+              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-200 transition-colors">
+                <svg
+                  className="w-6 h-6 text-red-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Multi-Recipient Email
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Send reports to your entire leadership team in one click.
+                  Add unlimited recipients per report configuration — every
+                  stakeholder stays informed without extra effort.
+                </p>
+              </div>
+            </div>
+
+            {/* Feature 6 */}
+            <div className="flex gap-5 p-6 rounded-2xl border border-gray-100 hover:border-indigo-100 hover:bg-indigo-50/30 transition-colors group">
+              <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-sky-200 transition-colors">
+                <svg
+                  className="w-6 h-6 text-sky-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 9l3 3-3 3m4 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Pause & Resume Anytime
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Need to pause a report during a freeze period? Toggle any
+                  schedule on or off from your dashboard without deleting the
+                  configuration. Resume with a single click.
+                </p>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── Features ── */}
-        <section id="features" className="bg-white px-6 py-24">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-16 text-center">
-              <div className="mb-3 text-sm font-semibold uppercase tracking-widest text-indigo-600">
-                Everything you need
+      {/* How It Works */}
+      <section className="py-24 px-6 bg-gray-50 border-t border-gray-100">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+            Up and running in minutes
+          </h2>
+          <p className="text-lg text-gray-500 mb-16 max-w-xl mx-auto">
+            Three steps from sign-up to automated executive reporting.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="flex flex-col items-center">
+              <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-extrabold mb-5 shadow-lg shadow-indigo-200">
+                1
               </div>
-              <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-                Built for reporting at scale
-              </h2>
-              <p className="mx-auto max-w-2xl text-lg text-gray-500">
-                WorkPulse handles the entire reporting pipeline — from data
-                collection to formatted delivery — so your team can focus on
-                the work itself.
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                Connect Monday.com
+              </h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Authenticate with your Monday.com account. SyncBridge uses
+                read-only access — your data is never modified.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((feature) => (
-                <div
-                  key={feature.title}
-                  className="group rounded-2xl border border-gray-100 bg-gray-50 p-6 transition-all hover:border-indigo-100 hover:bg-indigo-50/30 hover:shadow-md"
-                >
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-gray-100 transition-all group-hover:ring-indigo-200">
-                    {feature.icon}
-                  </div>
-                  <h3 className="mb-2 text-lg font-bold text-gray-900">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-gray-500">
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── How it works ── */}
-        <section
-          id="how-it-works"
-          className="bg-gradient-to-b from-indigo-50 to-white px-6 py-24"
-        >
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-16 text-center">
-              <div className="mb-3 text-sm font-semibold uppercase tracking-widest text-indigo-600">
-                Simple setup
+            <div className="flex flex-col items-center">
+              <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-extrabold mb-5 shadow-lg shadow-indigo-200">
+                2
               </div>
-              <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-                Up and running in minutes
-              </h2>
-              <p className="mx-auto max-w-xl text-lg text-gray-500">
-                No engineering work. No integrations to maintain. Just three
-                steps between you and automated reporting.
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                Configure Your Report
+              </h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                Select up to 10 boards, map columns to metrics, choose
+                aggregation rules, and set your delivery schedule and recipients.
               </p>
             </div>
 
-            <div className="relative">
-              {/* Connecting line — desktop only */}
-              <div
-                aria-hidden="true"
-                className="absolute left-0 right-0 top-16 hidden h-px bg-gradient-to-r from-transparent via-indigo-200 to-transparent lg:block"
-              />
-
-              <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-                {steps.map((step) => (
-                  <div key={step.number} className="relative text-center">
-                    <div className="relative mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-xl font-extrabold text-white shadow-lg shadow-indigo-200">
-                      {step.number}
-                    </div>
-                    <h3 className="mb-3 text-xl font-bold text-gray-900">
-                      {step.title}
-                    </h3>
-                    <p className="mx-auto max-w-xs text-sm leading-relaxed text-gray-500">
-                      {step.description}
-                    </p>
-                  </div>
-                ))}
+            <div className="flex flex-col items-center">
+              <div className="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-extrabold mb-5 shadow-lg shadow-indigo-200">
+                3
               </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">
+                Reports Deliver Themselves
+              </h3>
+              <p className="text-sm text-gray-500 leading-relaxed">
+                SyncBridge pulls fresh cross-board data on your schedule and
+                emails polished reports to every stakeholder. Automatically.
+              </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── Testimonials ── */}
-        <section id="testimonials" className="bg-white px-6 py-24">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-16 text-center">
-              <div className="mb-3 text-sm font-semibold uppercase tracking-widest text-indigo-600">
-                Trusted by teams
+      {/* Pricing Section */}
+      <section id="pricing" className="py-24 px-6 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+            Simple, transparent pricing
+          </h2>
+          <p className="text-lg text-gray-500 mb-16 max-w-xl mx-auto">
+            Start free. Upgrade when you're ready to scale.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            {/* Free Tier */}
+            <div className="rounded-2xl border border-gray-200 p-8 text-left hover:border-gray-300 transition-colors">
+              <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                Starter
+              </p>
+              <div className="flex items-end gap-1 mb-1">
+                <span className="text-5xl font-extrabold text-gray-900">$0</span>
+                <span className="text-gray-400 mb-2">/month</span>
               </div>
-              <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-                What our users say
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              {testimonials.map((t) => (
-                <div
-                  key={t.name}
-                  className="flex flex-col rounded-2xl border border-gray-100 bg-gray-50 p-6"
-                >
-                  {/* Stars */}
-                  <div className="mb-4 flex gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className="h-4 w-4 text-amber-400"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-
-                  <blockquote className="mb-6 flex-1 text-sm leading-relaxed text-gray-600">
-                    &ldquo;{t.quote}&rdquo;
-                  </blockquote>
-
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white ${t.color}`}
+              <p className="text-sm text-gray-500 mb-8">
+                Perfect for trying SyncBridge and small teams.
+              </p>
+              <ul className="space-y-3 mb-8">
+                {[
+                  "2 report configurations",
+                  "Up to 3 boards per report",
+                  "Weekly schedule only",
+                  "3 recipients per report",
+                  "30-day delivery history",
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-sm text-gray-600">
+                    <svg
+                      className="w-4 h-4 text-green-500 flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
                     >
-                      {t.initials}
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-gray-900">
-                        {t.name}
-                      </div>
-                      <div className="text-xs text-gray-400">{t.role}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/auth?mode=signup"
+                className="block w-full text-center bg-gray-100 text-gray-800 font-semibold py-3 rounded-xl hover:bg-gray-200 transition-colors"
+              >
+                Get started free
+              </Link>
+            </div>
+
+            {/* Pro Tier */}
+            <div className="rounded-2xl border-2 border-indigo-600 p-8 text-left relative shadow-xl shadow-indigo-100">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wide">
+                Most Popular
+              </div>
+              <p className="text-sm font-semibold text-indigo-500 uppercase tracking-wide mb-2">
+                Pro
+              </p>
+              <div className="flex items-end gap-1 mb-1">
+                <span className="text-5xl font-extrabold text-gray-900">$49</span>
+                <span className="text-gray-400 mb-2">/month</span>
+              </div>
+              <p className="text-sm text-gray-500 mb-8">
+                For ops teams and growing organizations.
+              </p>
+              <ul className="space-y-3 mb-8">
+                {[
+                  "Unlimited report configurations",
+                  "Up to 10 boards per report",
+                  "Daily, weekly, monthly schedules",
+                  "Unlimited recipients",
+                  "1-year delivery history",
+                  "Priority email support",
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3 text-sm text-gray-600">
+                    <svg
+                      className="w-4 h-4 text-indigo-500 flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/auth?mode=signup"
+                className="block w-full text-center bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200"
+              >
+                Start free trial
+              </Link>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── CTA Banner ── */}
-        <section
+      {/* Final CTA */}
+      <section className="py-24 px-6 bg-indigo-600">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-4xl font-extrabold text-white mb-5 leading-tight">
+            Stop spending Fridays building reports manually.
+          </h2>
+          <p className="text-indigo-200 text-lg mb-10 leading-relaxed">
+            SyncBridge automates the entire cross-board reporting workflow so
+            your team can focus on decisions, not data wrangling.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/auth?mode=signup"
+              className="bg-white text-indigo-700 font-bold text-base px-8 py-4 rounded-xl hover:bg-indigo-50 transition-colors shadow-lg"
+            >
+              Get started free — no credit card
+            </Link>
+            <Link
+              href="/auth"
+              className="border border-indigo-400 text-white font-semibold text-base px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors"
+            >
+              Already have an account? Log in
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-10 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-indigo-500 rounded-md flex items-center justify-center">
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </div>
+            <span className="text-white font-bold text-sm">SyncBridge</span>
+          </div>
+          <p className="text-xs text-gray-500 text-center">
+            © {new Date().getFullYear()} SyncBridge. Built for Monday.com power users.
+            Not affiliated with monday.com Ltd.
+          </p>
+          <div className="flex items-center gap-5 text-xs">
+            <Link href="/auth" className="hover:text-white transition-colors">
+              Log in
+            </Link>
+            <Link href="/auth?mode=signup" className="hover:text-white transition-colors">
+              Sign up
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
