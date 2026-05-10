@@ -1,75 +1,158 @@
-lib/monday.ts
-import { MondayBoard } from "@/types";
+import { Board, Item, Workspace } from '@/types';
 
-const MONDAY_API_URL = "https://api.monday.com/v2";
+const MONDAY_API_URL = 'https://api.monday.com/v2';
 
-interface MondayColumn {
-  id: string;
-  title: string;
-  type: string;
-}
-
-interface MondayColumnValue {
-  id: string;
-  text: string;
-  value: string;
-}
-
-interface MondayItem {
-  id: string;
-  name: string;
-  column_values: MondayColumnValue[];
-}
-
-interface MondayBoardRaw {
-  id: string;
-  name: string;
-  columns: MondayColumn[];
-  items_page: {
-    items: MondayItem[];
-  };
-}
-
-interface GraphQLResponse<T> {
+interface MondayGraphQLResponse<T> {
   data: T;
-  errors?: { message: string }[];
+  errors?: Array<{ message: string; locations?: unknown }>;
+  account_id?: number;
 }
 
-async function mondayQuery<T>(
+interface WorkspacesData {
+  workspaces: Array<{
+    id: string;
+    name: string;
+    kind: string;
+    description: string | null;
+  }>;
+}
+
+interface BoardsData {
+  boards: Array<{
+    id: string;
+    name: string;
+    description: string | null;
+    state: string;
+    workspace: {
+      id: string;
+      name: string;
+    } | null;
+    items_count: number;
+    groups: Array<{
+      id: string;
+      title: string;
+    }>;
+    columns: Array<{
+      id: string;
+      title: string;
+      type: string;
+    }>;
+  }>;
+}
+
+interface ItemsData {
+  boards: Array<{
+    items_page: {
+      cursor: string | null;
+      items: Array<{
+        id: string;
+        name: string;
+        state: string;
+        created_at: string;
+        updated_at: string;
+        group: {
+          id: string;
+          title: string;
+        };
+        column_values: Array<{
+          id: string;
+          type: string;
+          text: string;
+          value: string | null;
+        }>;
+      }>;
+    };
+  }>;
+}
+
+async function mondayRequest<T>(
   token: string,
   query: string,
   variables?: Record<string, unknown>
 ): Promise<T> {
   const response = await fetch(MONDAY_API_URL, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: token,
-      "API-Version": "2023-10",
+      'API-Version': '2024-01',
     },
     body: JSON.stringify({ query, variables }),
-    cache: "no-store",
   });
 
   if (!response.ok) {
-    throw new Error(`Monday.com API request failed with status ${response.status}`);
+    throw new Error(
+      `Monday.com API request failed: ${response.status} ${response.statusText}`
+    );
   }
 
-  const json: GraphQLResponse<T> = await response.json();
+  const json: MondayGraphQLResponse<T> = await response.json();
 
   if (json.errors && json.errors.length > 0) {
-    throw new Error(`Monday.com GraphQL error: ${json.errors.map((e) => e.message).join(", ")}`);
+    const messages = json.errors.map((e) => e.message).join('; ');
+    throw new Error(`Monday.com GraphQL errors: ${messages}`);
   }
 
   return json.data;
 }
 
-export async function fetchBoards(token: string): Promise<MondayBoard[]> {
+export async function fetchWorkspaces(token: string): Promise<Workspace[]> {
   const query = `
-    query {
-      boards(limit: 50, order_by: created_at) {
+    query GetWorkspaces {
+      workspaces {
         id
         name
+        kind
+        description
+      }
+    }
+  `;
+
+  const data = await mondayRequest<WorkspacesData>(token, query);
+
+  return data.workspaces.map((ws) => ({
+    id: ws.id,
+    name: ws.name,
+    kind: ws.kind,
+    description: ws.description ?? '',
+    monday_workspace_id: ws.id,
+    user_id: '',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }));
+}
+
+export async function fetchBoards(
+  token: string,
+  workspaceIds?: string[]
+): Promise<
+  Array<{
+    monday_board_id: string;
+    name: string;
+    description: string;
+    state: string;
+    workspace_monday_id: string | null;
+    workspace_name: string | null;
+    items_count: number;
+    columns: Array<{ id: string; title: string; type: string }>;
+  }>
+> {
+  const query = `
+    query GetBoards($workspaceIds: [ID]) {
+      boards(workspace_ids: $workspaceIds, limit: 200, order_by: created_at) {
+        id
+        name
+        description
+        state
+        workspace {
+          id
+          name
+        }
+        items_count
+        groups {
+          id
+          title
+        }
         columns {
           id
           title
@@ -79,42 +162,134 @@ export async function fetchBoards(token: string): Promise<MondayBoard[]> {
     }
   `;
 
-  const data = await mondayQuery<{ boards: { id: string; name: string; columns: MondayColumn[] }[] }>(
-    token,
-    query
-  );
+  const variables: Record<string, unknown> = {};
+  if (workspaceIds && workspaceIds.length > 0) {
+    variables.workspaceIds = workspaceIds;
+  }
+
+  const data = await mondayRequest<BoardsData>(token, query, variables);
 
   return data.boards.map((board) => ({
-    id: board.id,
+    monday_board_id: board.id,
     name: board.name,
-    columns: board.columns.map((col) => ({
-      id: col.id,
-      title: col.title,
-      type: col.type,
-    })),
+    description: board.description ?? '',
+    state: board.state,
+    workspace_monday_id: board.workspace?.id ?? null,
+    workspace_name: board.workspace?.name ?? null,
+    items_count: board.items_count,
+    columns: board.columns,
   }));
 }
 
-export async function fetchBoardById(
+interface RawItem {
+  monday_item_id: string;
+  monday_board_id: string;
+  name: string;
+  state: string;
+  group_id: string;
+  group_title: string;
+  created_at: string;
+  updated_at: string;
+  column_values: Array<{
+    id: string;
+    type: string;
+    text: string;
+    value: string | null;
+  }>;
+  is_completed: boolean;
+  is_overdue: boolean;
+}
+
+function isItemCompleted(
+  columnValues: Array<{ id: string; type: string; text: string; value: string | null }>,
+  state: string
+): boolean {
+  if (state === 'archived' || state === 'deleted') return false;
+
+  for (const col of columnValues) {
+    if (col.type === 'color' || col.type === 'status') {
+      const text = col.text?.toLowerCase() ?? '';
+      if (
+        text === 'done' ||
+        text === 'complete' ||
+        text === 'completed' ||
+        text === 'closed' ||
+        text === 'finished'
+      ) {
+        return true;
+      }
+      try {
+        if (col.value) {
+          const parsed = JSON.parse(col.value);
+          const index = parsed?.index;
+          if (index === 1 || index === 'done') return true;
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }
+  }
+  return false;
+}
+
+function isItemOverdue(
+  columnValues: Array<{ id: string; type: string; text: string; value: string | null }>,
+  isCompleted: boolean
+): boolean {
+  if (isCompleted) return false;
+
+  const now = new Date();
+
+  for (const col of columnValues) {
+    if (col.type === 'date' && col.text) {
+      try {
+        const dueDate = new Date(col.text);
+        if (!isNaN(dueDate.getTime()) && dueDate < now) {
+          return true;
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }
+    if (col.type === 'timeline' && col.value) {
+      try {
+        const parsed = JSON.parse(col.value);
+        if (parsed?.to) {
+          const endDate = new Date(parsed.to);
+          if (!isNaN(endDate.getTime()) && endDate < now) {
+            return true;
+          }
+        }
+      } catch {
+        // ignore parse errors
+      }
+    }
+  }
+  return false;
+}
+
+export async function fetchItemsForBoard(
   token: string,
   boardId: string
-): Promise<MondayBoardRaw | null> {
+): Promise<RawItem[]> {
   const query = `
-    query($boardId: [ID!]) {
-      boards(ids: $boardId) {
-        id
-        name
-        columns {
-          id
-          title
-          type
-        }
-        items_page(limit: 500) {
+    query GetBoardItems($boardId: ID!, $cursor: String) {
+      boards(ids: [$boardId]) {
+        items_page(limit: 500, cursor: $cursor) {
+          cursor
           items {
             id
             name
+            state
+            created_at
+            updated_at
+            group {
+              id
+              title
+            }
             column_values {
               id
+              type
               text
               value
             }
@@ -124,148 +299,120 @@ export async function fetchBoardById(
     }
   `;
 
-  const data = await mondayQuery<{ boards: MondayBoardRaw[] }>(token, query, {
-    boardId: [boardId],
-  });
+  const allItems: RawItem[] = [];
+  let cursor: string | null = null;
+  let hasMore = true;
 
-  if (!data.boards || data.boards.length === 0) {
-    return null;
-  }
-
-  return data.boards[0];
-}
-
-export type AggregationType = "sum" | "average" | "count" | "min" | "max";
-
-export interface ColumnAggregationRule {
-  columnId: string;
-  columnTitle: string;
-  aggregation: AggregationType;
-}
-
-export interface BoardAggregationResult {
-  boardId: string;
-  boardName: string;
-  metrics: Record<string, number | string>;
-  itemCount: number;
-}
-
-function parseNumeric(text: string): number | null {
-  if (!text || text.trim() === "") return null;
-  const cleaned = text.replace(/[^0-9.\-]/g, "");
-  const parsed = parseFloat(cleaned);
-  return isNaN(parsed) ? null : parsed;
-}
-
-function aggregateValues(values: number[], aggregation: AggregationType): number {
-  if (values.length === 0) return 0;
-
-  switch (aggregation) {
-    case "sum":
-      return values.reduce((acc, val) => acc + val, 0);
-    case "average":
-      return values.reduce((acc, val) => acc + val, 0) / values.length;
-    case "count":
-      return values.length;
-    case "min":
-      return Math.min(...values);
-    case "max":
-      return Math.max(...values);
-    default:
-      return 0;
-  }
-}
-
-export async function aggregateBoardData(
-  token: string,
-  boardId: string,
-  rules: ColumnAggregationRule[]
-): Promise<BoardAggregationResult | null> {
-  const board = await fetchBoardById(token, boardId);
-
-  if (!board) return null;
-
-  const items = board.items_page?.items ?? [];
-  const metrics: Record<string, number | string> = {};
-
-  for (const rule of rules) {
-    if (rule.aggregation === "count") {
-      metrics[rule.columnTitle] = items.length;
-      continue;
+  while (hasMore) {
+    const variables: Record<string, unknown> = { boardId };
+    if (cursor) {
+      variables.cursor = cursor;
     }
 
-    const numericValues: number[] = [];
+    const data = await mondayRequest<ItemsData>(token, query, variables);
+
+    const boardData = data.boards[0];
+    if (!boardData) break;
+
+    const page = boardData.items_page;
+    const items = page.items ?? [];
 
     for (const item of items) {
-      const colValue = item.column_values.find((cv) => cv.id === rule.columnId);
-      if (colValue) {
-        const numeric = parseNumeric(colValue.text);
-        if (numeric !== null) {
-          numericValues.push(numeric);
-        }
-      }
+      const completed = isItemCompleted(item.column_values, item.state);
+      const overdue = isItemOverdue(item.column_values, completed);
+
+      allItems.push({
+        monday_item_id: item.id,
+        monday_board_id: boardId,
+        name: item.name,
+        state: item.state,
+        group_id: item.group?.id ?? '',
+        group_title: item.group?.title ?? '',
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        column_values: item.column_values,
+        is_completed: completed,
+        is_overdue: overdue,
+      });
     }
 
-    const result = aggregateValues(numericValues, rule.aggregation);
-    metrics[rule.columnTitle] =
-      rule.aggregation === "average"
-        ? Math.round(result * 100) / 100
-        : result;
+    cursor = page.cursor;
+    hasMore = !!cursor && items.length > 0;
   }
 
-  return {
-    boardId: board.id,
-    boardName: board.name,
-    metrics,
-    itemCount: items.length,
-  };
+  return allItems;
 }
 
-export async function aggregateMultipleBoards(
-  token: string,
-  boardIds: string[],
-  rulesByBoard: Record<string, ColumnAggregationRule[]>
-): Promise<BoardAggregationResult[]> {
-  const results: BoardAggregationResult[] = [];
+export async function fetchAllBoardsAndItems(
+  token: string
+): Promise<{
+  boards: Awaited<ReturnType<typeof fetchBoards>>;
+  itemsByBoard: Record<string, RawItem[]>;
+}> {
+  const boards = await fetchBoards(token);
+  const itemsByBoard: Record<string, RawItem[]> = {};
 
-  for (const boardId of boardIds) {
-    const rules = rulesByBoard[boardId] ?? [];
-    try {
-      const result = await aggregateBoardData(token, boardId, rules);
-      if (result) {
-        results.push(result);
+  const activeBoards = boards.filter((b) => b.state === 'active');
+
+  await Promise.allSettled(
+    activeBoards.map(async (board) => {
+      try {
+        const items = await fetchItemsForBoard(token, board.monday_board_id);
+        itemsByBoard[board.monday_board_id] = items;
+      } catch (err) {
+        console.error(
+          `Failed to fetch items for board ${board.monday_board_id}:`,
+          err
+        );
+        itemsByBoard[board.monday_board_id] = [];
       }
-    } catch (error) {
-      console.error(`Failed to aggregate board ${boardId}:`, error);
-    }
-  }
+    })
+  );
 
-  return results;
+  return { boards, itemsByBoard };
 }
 
-export async function fetchBoardColumns(
-  token: string,
-  boardId: string
-): Promise<MondayColumn[]> {
+export async function validateMondayToken(token: string): Promise<boolean> {
   const query = `
-    query($boardId: [ID!]) {
-      boards(ids: $boardId) {
-        columns {
-          id
-          title
-          type
-        }
+    query ValidateToken {
+      me {
+        id
+        name
+        email
       }
     }
   `;
 
-  const data = await mondayQuery<{ boards: { columns: MondayColumn[] }[] }>(
-    token,
-    query,
-    { boardId: [boardId] }
-  );
+  try {
+    await mondayRequest<{ me: { id: string; name: string; email: string } }>(
+      token,
+      query
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-  if (!data.boards || data.boards.length === 0) return [];
+export async function fetchMondayUserInfo(
+  token: string
+): Promise<{ id: string; name: string; email: string } | null> {
+  const query = `
+    query GetMe {
+      me {
+        id
+        name
+        email
+      }
+    }
+  `;
 
-  return data.boards[0].columns;
+  try {
+    const data = await mondayRequest<{
+      me: { id: string; name: string; email: string };
+    }>(token, query);
+    return data.me;
+  } catch {
+    return null;
+  }
 }

@@ -1,89 +1,112 @@
-export type MondayBoard = {
+export interface User {
   id: string;
+  email: string;
+  monday_token: string | null;
+  sync_interval_minutes: number;
+  digest_enabled: boolean;
+  digest_day: string | null;
+  digest_time: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Workspace {
+  id: string;
+  monday_workspace_id: string;
+  user_id: string;
   name: string;
-  columns: MondayColumn[];
-};
+  created_at: string;
+  updated_at: string;
+}
 
-export type MondayColumn = {
+export interface Board {
   id: string;
-  title: string;
-  type: string;
-};
-
-export type ColumnMapping = {
-  columnId: string;
-  columnTitle: string;
-  columnType: string;
-  aggregation: "sum" | "average" | "count" | "min" | "max";
-  label: string;
-};
-
-export type BoardConfig = {
-  boardId: string;
-  boardName: string;
-  columnMappings: ColumnMapping[];
-};
-
-export type ReportSchedule = {
-  frequency: "daily" | "weekly" | "monthly";
-  dayOfWeek?: number;
-  dayOfMonth?: number;
-  hour: number;
-  timezone: string;
-};
-
-export type ReportConfiguration = {
-  id: string;
-  userId: string;
+  monday_board_id: string;
+  workspace_id: string;
+  user_id: string;
   name: string;
-  boardConfigs: BoardConfig[];
-  schedule: ReportSchedule;
-  recipients: string[];
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  lastSentAt: string | null;
-};
+  total_items: number;
+  completed_items: number;
+  overdue_items: number;
+  last_synced_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
-export type ReportBoardMetric = {
-  boardId: string;
-  boardName: string;
-  metrics: {
-    label: string;
-    columnId: string;
-    columnTitle: string;
-    aggregation: ColumnMapping["aggregation"];
-    value: number | string;
-  }[];
-};
-
-export type ReportSnapshot = {
+export interface Item {
   id: string;
-  reportConfigurationId: string;
-  generatedAt: string;
-  boardMetrics: ReportBoardMetric[];
-  recipientCount: number;
-};
-
-export type DeliveryLog = {
-  id: string;
-  reportConfigurationId: string;
-  reportSnapshotId: string;
-  deliveredAt: string;
-  status: "success" | "failure" | "pending";
-  errorMessage: string | null;
-  recipients: string[];
-  snapshot: ReportSnapshot | null;
-};
-
-export type CreateReportConfigurationInput = {
+  monday_item_id: string;
+  board_id: string;
+  user_id: string;
   name: string;
-  boardConfigs: BoardConfig[];
-  schedule: ReportSchedule;
-  recipients: string[];
-};
+  status: string | null;
+  due_date: string | null;
+  is_completed: boolean;
+  is_overdue: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-export type UpdateReportActiveStateInput = {
-  reportId: string;
-  isActive: boolean;
-};
+export interface SyncLog {
+  id: string;
+  user_id: string;
+  status: 'success' | 'failure' | 'in_progress';
+  boards_synced: number;
+  items_synced: number;
+  error_message: string | null;
+  started_at: string;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export interface DigestLog {
+  id: string;
+  user_id: string;
+  status: 'sent' | 'failed' | 'pending';
+  recipient_email: string;
+  boards_included: number;
+  error_message: string | null;
+  scheduled_for: string;
+  sent_at: string | null;
+  created_at: string;
+}
+
+export interface Database {
+  public: {
+    Tables: {
+      users: {
+        Row: User;
+        Insert: Partial<User> & { id: string; email: string };
+        Update: Partial<User>;
+      };
+      workspaces: {
+        Row: Workspace;
+        Insert: Partial<Workspace> & { monday_workspace_id: string; user_id: string; name: string };
+        Update: Partial<Workspace>;
+      };
+      boards: {
+        Row: Board;
+        Insert: Partial<Board> & { monday_board_id: string; workspace_id: string; user_id: string; name: string };
+        Update: Partial<Board>;
+      };
+      items: {
+        Row: Item;
+        Insert: Partial<Item> & { monday_item_id: string; board_id: string; user_id: string; name: string };
+        Update: Partial<Item>;
+      };
+      sync_logs: {
+        Row: SyncLog;
+        Insert: Partial<SyncLog> & { user_id: string };
+        Update: Partial<SyncLog>;
+      };
+      digest_logs: {
+        Row: DigestLog;
+        Insert: Partial<DigestLog> & { user_id: string; recipient_email: string };
+        Update: Partial<DigestLog>;
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+  };
+}

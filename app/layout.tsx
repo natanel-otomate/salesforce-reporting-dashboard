@@ -1,36 +1,39 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+app/layout.tsx
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
 
 const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: "SyncBridge — One report. Every board. Delivered automatically.",
+  title: 'BoardPulse — Every project. One view. Automatically.',
   description:
-    "SyncBridge automatically aggregates cross-board Monday.com data into executive reports delivered on your schedule. No more manual dashboards.",
-  keywords: ["Monday.com", "reporting", "automation", "executive dashboard", "cross-board"],
-  authors: [{ name: "SyncBridge" }],
+    'BoardPulse connects to your Monday.com account and renders a unified executive dashboard across all workspaces — updated automatically, no manual exports.',
+  keywords: ['monday.com', 'project management', 'dashboard', 'reporting', 'boardpulse'],
+  authors: [{ name: 'BoardPulse' }],
   openGraph: {
-    title: "SyncBridge",
-    description: "One report. Every board. Delivered automatically.",
-    type: "website",
+    title: 'BoardPulse',
+    description: 'Every project. One view. Automatically.',
+    type: 'website',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-gray-50 text-gray-900 font-sans antialiased">
-        {children}
+    <html lang="en" className={`${inter.variable} h-full`}>
+      <body className="h-full min-h-screen bg-gray-50 font-sans antialiased text-gray-900">
+        <div className="flex flex-col min-h-screen">
+          {children}
+        </div>
       </body>
     </html>
-  );
+  )
 }
